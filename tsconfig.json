@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "outDir": "game/js",
+    "strictNullChecks": false,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["src", "libs/**/*.d.ts", "main.ts"]
+}

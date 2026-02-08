@@ -1,0 +1,26 @@
+{
+  "name": "rpgmaker_Next",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "splitFiles": "node mz/FileSplitter.js"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-replace": "^6.0.2",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/nw.gui": "^0.0.26",
+    "@types/nw.js": "^0.92.0",
+    "rollup": "^4.40.2",
+    "typescript": "^5.8.3"
+  },
+  "private": true,
+  "dependencies": {
+    "glob": "^11.0.3",
+    "pixi.js": "^8.9.2"
+  }
+}

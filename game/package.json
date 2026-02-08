@@ -1,0 +1,23 @@
+{
+  "name": "rpgmaker_Next",
+  "version": "1.0.0",
+  "main": "index.html",
+  "chromium-args": "--force-color-profile=srgb",
+  "window": {
+    "title": "app",
+    "width": 800,
+    "height": 600,
+    "position": "center",
+    "icon": "icon/icon.png"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "nw .",
+    "debug": "nw . --enable-logging --remote-debugging-port=9222"
+  },
+  "devDependencies": {
+    "@types/nw.js": "^0.92.0",
+    "nw": "^0.99.1"
+  },
+  "private": true
+}

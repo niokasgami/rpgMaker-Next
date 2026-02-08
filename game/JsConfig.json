@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@math": ["./js/math/index.js"],
+      "@math/*": ["./js/math/*"],
+      "pixi.js": ["./js/libs/pixi.mjs"],
+      "rm-next.js" : ["./js/rm-next.js"]
+    },
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "allowJs": true,
+    "checkJs": true
+  },
+  "exclude": ["node_modules", "dist"]
+}
