@@ -16,7 +16,7 @@
     "@types/nw.gui": "^0.0.26",
     "@types/nw.js": "^0.92.0",
     "rollup": "^4.40.2",
-    "typescript": "^5.8.3"
+    "typescript": "5.9.3"
   },
   "private": true,
   "dependencies": {

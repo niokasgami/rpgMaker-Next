@@ -61,7 +61,7 @@ export class Sprite extends PixiSprite implements IContractualClass {
 
   set width(value: number){
     this._frame.width = value;
-    this._refresh();
+    this.refresh();
   }
   /**
    * the sprite height without the scale
@@ -72,7 +72,7 @@ export class Sprite extends PixiSprite implements IContractualClass {
 
   set height(value: number){
     this._frame.height = value;
-    this._refresh();
+    this.refresh();
   }
 
   /**
@@ -109,11 +109,11 @@ export class Sprite extends PixiSprite implements IContractualClass {
       frame.y = y;
       frame.width = width;
       frame.height = height;
-      this._refresh();
+      this.refresh();
     }
   }
 
-  private _refresh() {
+  private refresh() {
     const frameX = Math.floor(this._frame.x);
     const frameY = Math.floor(this._frame.y);
     const frameW = Math.floor(this._frame.width);
@@ -142,6 +142,10 @@ export class Sprite extends PixiSprite implements IContractualClass {
     this._bitmap.assignTexture(texture);
     this.texture = this._bitmap.texture;
     this.texture.update();
+  }
+
+  private _onBitmapChange() {
+
   }
 }
 

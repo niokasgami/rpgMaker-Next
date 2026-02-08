@@ -8,7 +8,27 @@
     "strict": true,
     "outDir": "game/js",
     "strictNullChecks": false,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "rmmz/*": ["src/*"],
+
+      "@core" : [ "src/core"],
+      "@core/*": ["src/core/*"],
+
+      "@data" : [ "src/data"],
+      "@data/*": ["src/data/*"],
+
+      "@managers" : ["src/managers"],
+      "@managers/*": ["src/managers/*"],
+
+      "@objects" : ["src/objects"],
+      "@objects/*": ["src/objects/*"],
+
+      "@scenes": ["src/scenes"],
+      "@scenes/*": ["src/scenes/*"]
+    }
   },
   "include": ["src", "libs/**/*.d.ts", "main.ts"]
 }
