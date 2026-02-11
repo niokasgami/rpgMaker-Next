@@ -1,8 +1,8 @@
 export * from "./Action.ts";
 export * from "./Advanced.ts";
-export * from "./Airship.ts";
+export * from "./Vehicule.ts";
 export * from "./BattleCondition.ts";
-export * from "./Bgm.ts";
+export * from "./AudioObject.ts";
 export * from "./Damage.ts";
 export * from "./DropItem.ts";
 export * from "./Effect.ts";
@@ -26,3 +26,5 @@ export * from "./Terms.ts";
 export * from "./TestBattler.ts";
 export * from "./TitleCommandWindow.ts";
 export * from "./Trait.ts";
+export * from "./ItemDamage.ts";
+export * from "./ItemEffect.ts";

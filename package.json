@@ -13,14 +13,18 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-typescript": "^12.1.2",
+    "@types/localforage": "^0.0.33",
     "@types/nw.gui": "^0.0.26",
     "@types/nw.js": "^0.92.0",
+    "@types/pako": "^2.0.4",
     "rollup": "^4.40.2",
     "typescript": "5.9.3"
   },
   "private": true,
   "dependencies": {
     "glob": "^11.0.3",
+    "localforage": "^1.10.0",
+    "pako": "^2.1.0",
     "pixi.js": "^8.9.2"
   }
 }

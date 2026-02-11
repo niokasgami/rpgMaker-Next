@@ -1,7 +1,7 @@
-import { Bgm } from './Bgm.ts';
+import { AudioObject } from './AudioObject.ts';
 
-export interface Airship {
-  bgm: Bgm;
+export interface Vehicule {
+  bgm: AudioObject;
   characterIndex: number;
   characterName: string;
   startMapId: number;

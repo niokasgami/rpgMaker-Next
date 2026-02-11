@@ -1,11 +1,15 @@
 import { IContractualClass } from '@core/interfaces';
 import { DataItemBase } from '../data/DataItemBase.ts';
 import { $dataArmors, $dataWeapons, $dataItems, $dataSkills, DataManager } from '@managers';
+import { DataItem } from '@data/DataItem.ts';
+import { DataWeapon } from '@data/DataWeapon.ts';
+import { DataArmor } from '@data/DataArmor.ts';
+import { DataSkill } from '@data/DataSkill.ts';
 
 
 
 type DataClass = "skill" | "item" | "weapon" | "armor" | "";
-type EquipmentType =  DataSkill | DataItem | DataWeapon | DataArmor | null;
+type ItemType =  DataSkill | DataItem | DataWeapon | DataArmor | null;
 
 /**
  * The game object class for handling skills, items, weapons, and armor. It is
@@ -16,7 +20,7 @@ export class GameItem implements  IContractualClass {
   protected _dataClass: DataClass;
   protected _itemId: number;
 
-  constructor(item: DataItemBase);
+  constructor(item: ItemType);
   constructor(...args: any[]){
     this.initialize(...args);
   }
@@ -27,7 +31,7 @@ export class GameItem implements  IContractualClass {
    * @param args extra arguments for plugins developers
    * @constructor
    */
-  initialize( item?: DataItemBase,...args: any[]): void {
+  initialize( item?: ItemType,...args: any[]): void {
     if(item){
       this.setObject(item);
     }
@@ -99,9 +103,9 @@ export class GameItem implements  IContractualClass {
 
   /**
    * Return the item object
-   * @returns {EquipmentType} the item object
+   * @returns {ItemType} the item object
    */
-  object(): EquipmentType {
+  object(): ItemType {
     if(this.isSkill()) return $dataSkills[this._itemId];
     else if(this.isItem()) return $dataItems[this._itemId];
     else if (this.isWeapon()) return $dataWeapons[this._itemId];
@@ -113,7 +117,7 @@ export class GameItem implements  IContractualClass {
    * Set the item object.
    * @param item The item object to set the GameItem with.
    */
-  setObject(item: EquipmentType){
+  setObject(item: ItemType){
     const data = DataManager;
     if(data.isSkill(item)) this._dataClass = "skill";
     else if(data.isItem(item)) this._dataClass = "item";

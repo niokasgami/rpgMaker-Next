@@ -1,5 +1,5 @@
 
-  export interface Bgm {
+  export interface AudioObject {
     name: string;
     pan: number;
     pitch: number;
