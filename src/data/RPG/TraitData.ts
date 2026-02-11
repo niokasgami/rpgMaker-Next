@@ -1,5 +1,5 @@
 
-  export interface Trait {
+  export interface TraitData {
     code: number;
     dataId: number;
     value: number;

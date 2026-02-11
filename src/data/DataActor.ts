@@ -1,5 +1,5 @@
 import { BaseData } from "./BaseData.ts";
-import { Trait } from './RPG';
+import { TraitData } from './RPG';
 
 export interface DataActor extends BaseData {
   battlerName: string;
@@ -9,7 +9,7 @@ export interface DataActor extends BaseData {
   equips: number[];
   faceIndex: number;
   faceName: string;
-  traits: Trait[];
+  traits: TraitData[];
   initialLevel: number;
   maxLevel: number;
   nickname: string;

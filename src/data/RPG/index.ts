@@ -25,6 +25,6 @@ export * from "./SoundTiming.ts";
 export * from "./Terms.ts";
 export * from "./TestBattler.ts";
 export * from "./TitleCommandWindow.ts";
-export * from "./Trait.ts";
+export * from "./TraitData.ts";
 export * from "./ItemDamage.ts";
 export * from "./ItemEffect.ts";

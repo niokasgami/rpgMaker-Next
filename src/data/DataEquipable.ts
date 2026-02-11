@@ -1,9 +1,9 @@
 import { DataItemBase } from './DataItemBase.ts';
-import { Trait } from './RPG';
+import { TraitData } from './RPG';
 
 export interface DataEquipable extends DataItemBase {
   etypeId: number;
-  traits: Trait[];
+  traits: TraitData[];
   params: number[];
   price: number;
 }
