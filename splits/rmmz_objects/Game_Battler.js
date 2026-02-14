@@ -1,4 +1,4 @@
-
+//-----------------------------------------------------------------------------
 // Game_Battler
 //
 // The superclass of Game_Actor and Game_Enemy. It contains methods for sprites
@@ -120,10 +120,10 @@ Game_Battler.prototype.startDamagePopup = function() {
 Game_Battler.prototype.shouldPopupDamage = function() {
     const result = this._result;
     return (
-        result.missed ||
-        result.evaded ||
-        result.hpAffected ||
-        result.mpDamage !== 0
+      result.missed ||
+      result.evaded ||
+      result.hpAffected ||
+      result.mpDamage !== 0
     );
 };
 
@@ -356,10 +356,10 @@ Game_Battler.prototype.addState = function(stateId) {
 
 Game_Battler.prototype.isStateAddable = function(stateId) {
     return (
-        this.isAlive() &&
-        $dataStates[stateId] &&
-        !this.isStateResist(stateId) &&
-        !this.isStateRestrict(stateId)
+      this.isAlive() &&
+      $dataStates[stateId] &&
+      !this.isStateResist(stateId) &&
+      !this.isStateRestrict(stateId)
     );
 };
 
@@ -445,8 +445,8 @@ Game_Battler.prototype.removeAllBuffs = function() {
 Game_Battler.prototype.removeStatesAuto = function(timing) {
     for (const state of this.states()) {
         if (
-            this.isStateExpired(state.id) &&
-            state.autoRemovalTiming === timing
+          this.isStateExpired(state.id) &&
+          state.autoRemovalTiming === timing
         ) {
             this.removeState(state.id);
         }
@@ -464,8 +464,8 @@ Game_Battler.prototype.removeBuffsAuto = function() {
 Game_Battler.prototype.removeStatesByDamage = function() {
     for (const state of this.states()) {
         if (
-            state.removeByDamage &&
-            Math.randomInt(100) < state.chanceByDamage
+          state.removeByDamage &&
+          Math.randomInt(100) < state.chanceByDamage
         ) {
             this.removeState(state.id);
         }
@@ -725,4 +725,3 @@ Game_Battler.prototype.performSubstitute = function(/*target*/) {
 Game_Battler.prototype.performCollapse = function() {
     //
 };
-

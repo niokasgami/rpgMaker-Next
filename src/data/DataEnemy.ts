@@ -1,5 +1,5 @@
 import { BaseData } from '@data/BaseData.ts';
-import { Action, DropItem, Trait } from '@data/RPG';
+import { Action, DropItem, TraitData } from '@data/RPG';
 
 
 export interface DataEnemy extends BaseData {
@@ -8,7 +8,7 @@ export interface DataEnemy extends BaseData {
   battlerName: string;
   dropItems: DropItem[];
   exp: number;
-  traits: Trait[];
+  traits: TraitData[];
   gold: number;
   params: number[];
 }

@@ -9,8 +9,8 @@ import { DataSkill } from '@data/DataSkill.ts';
 
 
 type DataClass = "skill" | "item" | "weapon" | "armor" | "";
-type ItemType =  DataSkill | DataItem | DataWeapon | DataArmor | null;
-
+export type ItemType =  DataSkill | DataItem | DataWeapon | DataArmor | null;
+export type EquipmentType = DataArmor | DataWeapon | null;
 /**
  * The game object class for handling skills, items, weapons, and armor. It is
  * required because save data should not include the database object itself.
@@ -20,7 +20,7 @@ export class GameItem implements  IContractualClass {
   protected _dataClass: DataClass;
   protected _itemId: number;
 
-  constructor(item: ItemType);
+  constructor(item?: ItemType);
   constructor(...args: any[]){
     this.initialize(...args);
   }

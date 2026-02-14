@@ -9,7 +9,7 @@
     "outDir": "game/js",
     "strictNullChecks": false,
     "allowImportingTsExtensions": true,
-
+    "noImplicitOverride": true,
     "baseUrl": ".",
     "paths": {
       "rmmz/*": ["src/*"],

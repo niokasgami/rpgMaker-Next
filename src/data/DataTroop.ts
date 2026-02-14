@@ -13,6 +13,7 @@ export interface DataTroop {
   pages: {
     conditions: BattleCondition;
     list: PageList[];
-  };
+    span: number;
+  }[];
   span: number;
 }

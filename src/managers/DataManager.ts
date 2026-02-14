@@ -17,13 +17,16 @@ import { SavefileInfo } from '@data/SavefileInfo.ts';
 import { Engine, Utils } from '@core';
 import { DataItemBase } from '@data/DataItemBase.ts';
 import { GameSystem } from '@objects/GameSystem.ts';
-import { DataItemConsumable } from '@data/DataItemConsumable.ts';
+import { GameActors } from '@objects/GameActors.ts';
+import { GameParty } from '@objects/GameParty.ts';
+import { GameTimer } from '@objects/GameTimer.ts';
+import { GameTroop } from '@objects/GameTroop.ts';
 
 // DATA RELATED JSON
 export let $dataActors: DataActor[] = null;
 export let $dataClasses: DataClass[] = null;
 export let $dataSkills: DataSkill[] = null;
-export let $dataItems: DataItemConsumable[] = null;
+export let $dataItems: DataItem[] = null;
 export let $dataWeapons: DataWeapon[] = null;
 export let $dataArmors: DataArmor[] = null;
 export let $dataEnemies: DataEnemy[] = null;
@@ -45,7 +48,7 @@ export let $gameMessage: GameMessage = null;
 export let $gameSwitches: GameSwitches = null;
 export let $gameVariables: GameVariables = null;
 export let $gameSelfSwitches: GameSelfSwitches = null;
-export let $gameActors: GameActors[] = null;
+export let $gameActors: GameActors = null;
 export let $gameParty: GameParty = null;
 export let $gameTroop: GameTroop = null;
 export let $gameMap: GameMap = null;
