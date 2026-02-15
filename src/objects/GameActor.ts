@@ -1,5 +1,5 @@
 import { GameBattler } from '@objects/GameBattler.ts';
-import { EquipmentType, GameItem, ItemType } from '@objects/GameItem.ts';
+import { EquipmentType, GameItem } from '@objects/GameItem.ts';
 import {
   $dataActors,
   $dataArmors, $dataClasses, $dataSkills,
@@ -23,6 +23,7 @@ import { TextManager } from '@managers/TextManager.ts';
 import { DataUsableItem } from '@data/DataUsableItem.ts';
 import { GameParty } from '@objects/GameParty.ts';
 import { GameTroop } from '@objects/GameTroop.ts';
+import { ActionEffect, GameAction } from '@objects/GameAction.ts';
 
 export class GameActor extends GameBattler {
 
@@ -406,7 +407,7 @@ export class GameActor extends GameBattler {
     $gameTemp.requestBattleRefresh();
   }
 
-  override isActor(): boolean {
+  override isActor(): this is GameActor {
     return true;
   }
 
@@ -717,11 +718,11 @@ export class GameActor extends GameBattler {
 
   makeActionList(): GameAction[] {
     const list = [];
-    const attackAction = new Game_Action(this);
+    const attackAction = new GameAction(this);
     attackAction.setAttack();
     list.push(attackAction);
     for (const skill of this.usableSkills()) {
-      const skillAction = new Game_Action(this);
+      const skillAction = new GameAction(this);
       skillAction.setSkill(skill.id);
       list.push(skillAction);
     }
@@ -905,7 +906,7 @@ export class GameActor extends GameBattler {
 
   testEscape(item: DataUsableItem) {
     return item.effects.some(
-      effect => effect && effect.code === Actions.EFFECT_SPECIAL
+      effect => effect && effect.code === ActionEffect.SPECIAL_EFFECT_ESCAPE
     );
   }
 

@@ -4,6 +4,13 @@ import { $dataStates, $dataSystem, $gameParty, $gameTroop, DataManager } from '@
 import { DataUsableItem } from '@data/DataUsableItem.ts';
 import { DataItem } from '@data/DataItem.ts';
 import { DataSkill } from '@data/DataSkill.ts';
+import { GameAction } from '@objects/GameAction.ts';
+import { GameParty } from '@objects/GameParty.ts';
+import { GameTroop } from '@objects/GameTroop.ts';
+import { GameUnit } from '@objects/GameUnit.ts';
+import { GameActor } from '@objects/GameActor.ts';
+import { GameActionResult } from '@objects/GameActionResult.ts';
+import { GameEnemy } from '@objects/GameEnemy.ts';
 
 
 type EffectType = "whiten" | "blink" | "collapse" | "bossCollapse" | "instantCollapse" | "";
@@ -14,6 +21,8 @@ type MotionType = "guard" | "spell" | "skill" | "item" | "thrust" | "swing" | "m
 type TpbState = "charging" | "casting" | "acting" | "ready" | "charged" | "";
 
 type ActionState = "undecided" | "inputting" | "waiting" | "acting" | "done" | "";
+
+export type BattleUnit = GameParty | GameTroop;
 
 export abstract class GameBattler extends GameBattlerBase implements IContractualClass {
 
@@ -41,7 +50,7 @@ export abstract class GameBattler extends GameBattlerBase implements IContractua
 
     this._actions = [];
     this._speed = 0;
-    this._result = new Game_ActionResult();
+    this._result = new GameActionResult();
     this._actionState = "";
     this._lastTargetIndex = 0;
     this._damagePopup = false;
@@ -57,6 +66,11 @@ export abstract class GameBattler extends GameBattlerBase implements IContractua
     this._tpbTurnCount = 0;
     this._tpbTurnEnd = false;
   }
+
+
+  abstract friendsUnit():  BattleUnit;
+
+  abstract opponentsUnit(): BattleUnit;
 
   clearDamagePopup() {
     this._damagePopup = false;
@@ -157,7 +171,7 @@ export abstract class GameBattler extends GameBattlerBase implements IContractua
     return this._actions[index];
   }
 
-  setAction(index: number, action){
+  setAction(index: number, action : GameAction) {
     this._actions[index] = action;
   }
 
@@ -345,7 +359,7 @@ export abstract class GameBattler extends GameBattlerBase implements IContractua
     if (BattleManager.isTpb()) {
       return this._tpbTurnCount;
     } else {
-      return $gameTroop.turnCount + 1;
+      return $gameTroop.turnCount() + 1;
     }
   }
 
@@ -526,8 +540,8 @@ export abstract class GameBattler extends GameBattlerBase implements IContractua
     this._actions.shift();
   }
 
-  setLastTarget(target){
-    this._lastTargetIndex = target ? target.index() : 0;
+  setLastTarget(target: GameBattler){
+    this._lastTargetIndex = target ? (target as GameEnemy).index() : 0;
   }
 
   forceAction(skillId: number, targetIndex: number){
@@ -738,7 +752,7 @@ export abstract class GameBattler extends GameBattlerBase implements IContractua
     SoundManager.playReflection();
   }
 
-  performSubstitute(_target){
+  performSubstitute(_target: GameBattler){
 
   }
 

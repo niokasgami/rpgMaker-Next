@@ -5,6 +5,6 @@ import { DataUsableItem } from '@data/DataUsableItem.ts';
 
 
 export interface DataItem extends DataUsableItem {
-  iTypeId: number;
+  iTypeId: DataItem;
   consumable: boolean;
 }

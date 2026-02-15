@@ -9,6 +9,9 @@ import { DataEquipable } from '@data/DataEquipable.ts';
 import { DataWeapon } from '@data/DataWeapon.ts';
 import { DataArmor } from '@data/DataArmor.ts';
 import { OccasionType } from '@data/RPG/Enum.ts';
+import { GameActors } from '@objects/GameActors.ts';
+import { GameActor } from '@objects/GameActor.ts';
+import { GameEnemy } from '@objects/GameEnemy.ts';
 
 
 export interface WithTraits {
@@ -1289,7 +1292,7 @@ export abstract class GameBattlerBase implements IContractualClass {
    * Always returns `false` in the base class; overridden by `GameActor`.
    * @returns `false` by default.
    */
-  isActor(): boolean {
+  isActor(): this is GameActor {
     return false;
   }
 
@@ -1298,7 +1301,7 @@ export abstract class GameBattlerBase implements IContractualClass {
    * Always returns `false` in the base class; overridden by `GameEnemy`.
    * @returns `false` by default.
    */
-  isEnemy(): boolean {
+  isEnemy(): this is GameEnemy {
     return false;
   }
 

@@ -9,7 +9,7 @@ import { DataSkill } from '@data/DataSkill.ts';
 
 
 type DataClass = "skill" | "item" | "weapon" | "armor" | "";
-export type ItemType =  DataSkill | DataItem | DataWeapon | DataArmor | null;
+export type DataGameItem =  DataSkill | DataItem | DataWeapon | DataArmor | null;
 export type EquipmentType = DataArmor | DataWeapon | null;
 /**
  * The game object class for handling skills, items, weapons, and armor. It is
@@ -20,7 +20,7 @@ export class GameItem implements  IContractualClass {
   protected _dataClass: DataClass;
   protected _itemId: number;
 
-  constructor(item?: ItemType);
+  constructor(item?: DataGameItem);
   constructor(...args: any[]){
     this.initialize(...args);
   }
@@ -31,7 +31,7 @@ export class GameItem implements  IContractualClass {
    * @param args extra arguments for plugins developers
    * @constructor
    */
-  initialize( item?: ItemType,...args: any[]): void {
+  initialize(item?: DataGameItem, ...args: any[]): void {
     if(item){
       this.setObject(item);
     }
@@ -41,7 +41,7 @@ export class GameItem implements  IContractualClass {
    * Return whether the item is a skill or not.
    * @returns {boolean} True if the item is a skill, false otherwise.
    */
-  isSkill(): boolean {
+  isSkill(): this is DataSkill {
     return this._dataClass === "skill";
   }
 
@@ -49,7 +49,7 @@ export class GameItem implements  IContractualClass {
    * Return whether the item is an item or not.
    * @returns {boolean} True if the item is an item, false otherwise.
    */
-  isItem(): boolean {
+  isItem(): this is DataItem {
     return this._dataClass === "item";
   }
 
@@ -57,7 +57,7 @@ export class GameItem implements  IContractualClass {
    * Return whether the item is usable or not.
    * @returns {boolean} True if the item is usable, false otherwise.
    */
-  isUsableItem(): boolean {
+  isUsableItem(): this is DataItem  | DataSkill {
     return this.isSkill() || this.isItem();
   }
 
@@ -65,7 +65,7 @@ export class GameItem implements  IContractualClass {
    * Return whether the item is a weapon or not.
    * @returns {boolean} True if the item is a weapon, false otherwise.
    */
-  isWeapon(): boolean {
+  isWeapon(): this is DataWeapon {
     return this._dataClass === "armor";
   }
 
@@ -73,7 +73,7 @@ export class GameItem implements  IContractualClass {
    * Return whether the item is an armor or not.
    * @returns {boolean} True if the item is an armor, false otherwise.
    */
-  isArmor(): boolean {
+  isArmor(): this is DataArmor {
     return this._dataClass === "armor";
   }
 
@@ -81,7 +81,7 @@ export class GameItem implements  IContractualClass {
    * Return whether the item is an equipable item or not.
    * @returns {boolean} True if the item is an equip item, false otherwise.
    */
-  isEquipItem(): boolean {
+  isEquipItem(): this is DataWeapon | DataArmor {
     return this.isWeapon() || this.isArmor();
   }
 
@@ -103,9 +103,9 @@ export class GameItem implements  IContractualClass {
 
   /**
    * Return the item object
-   * @returns {ItemType} the item object
+   * @returns {DataGameItem} the item object
    */
-  object(): ItemType {
+  object(): DataGameItem {
     if(this.isSkill()) return $dataSkills[this._itemId];
     else if(this.isItem()) return $dataItems[this._itemId];
     else if (this.isWeapon()) return $dataWeapons[this._itemId];
@@ -117,7 +117,7 @@ export class GameItem implements  IContractualClass {
    * Set the item object.
    * @param item The item object to set the GameItem with.
    */
-  setObject(item: ItemType){
+  setObject(item: DataGameItem){
     const data = DataManager;
     if(data.isSkill(item)) this._dataClass = "skill";
     else if(data.isItem(item)) this._dataClass = "item";

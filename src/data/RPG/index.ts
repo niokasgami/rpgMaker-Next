@@ -1,4 +1,4 @@
-export * from "./Action.ts";
+export * from "./ActionData.ts";
 export * from "./Advanced.ts";
 export * from "./Vehicule.ts";
 export * from "./BattleCondition.ts";

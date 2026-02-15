@@ -10,10 +10,11 @@ import {
   $gameTroop
 } from '@managers';
 import { DataEnemy } from '@data/DataEnemy.ts';
-import { DropItemKind } from '@data/RPG';
+import { ActionData, DropItemKind } from '@data/RPG';
 import { CollapseType } from '@objects/GameBattlerBase.ts';
 import { GameTroop } from '@objects/GameTroop.ts';
 import { GameParty } from '@objects/GameParty.ts';
+import { GameAction } from '@objects/GameAction.ts';
 
 
 export class GameEnemy extends GameBattler {
@@ -49,7 +50,7 @@ export class GameEnemy extends GameBattler {
     this.recoverAll();
   }
 
-  override isEnemy(): boolean {
+  override isEnemy(): this is GameEnemy {
     return true;
   }
 
@@ -209,7 +210,7 @@ export class GameEnemy extends GameBattler {
     }
   }
 
-  meetsCondition(action: GameAction){
+  meetsCondition(action: ActionData){
     const param1 = action.conditionParam1;
     const param2 = action.conditionParam2;
     switch (action.conditionType) {
@@ -259,13 +260,13 @@ export class GameEnemy extends GameBattler {
     return $gameSwitches.value(param);
   }
 
-  isActionValid(action: GameAction): boolean {
+  isActionValid(action: ActionData): boolean {
     return (
       this.meetsCondition(action) && this.canUse($dataSkills[action.skillId])
     );
   }
 
-  selectAction(actionList: GameAction[], ratingZero: number) : GameAction {
+  selectAction(actionList: ActionData[], ratingZero: number) : ActionData {
     const sum = actionList.reduce((r, a) => r + a.rating - ratingZero, 0);
     if (sum > 0) {
       let value = Math.randomInt(sum);
@@ -280,7 +281,7 @@ export class GameEnemy extends GameBattler {
     }
   }
 
-  selectAllActions(actionList: GameAction[]) {
+  selectAllActions(actionList: ActionData[]) {
     const ratingMax = Math.max(...actionList.map(a => a.rating));
     const ratingZero = ratingMax - 3;
     actionList = actionList.filter(a => a.rating > ratingZero);

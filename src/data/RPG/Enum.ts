@@ -16,8 +16,9 @@ export enum OccasionType {
   NEVER = 3
 }
 
+
 export enum HitType {
-  CERTAIN_HIT = 0,
+  CERTAIN = 0,
   PHYSICAL = 1,
   MAGICAL = 2
 }
