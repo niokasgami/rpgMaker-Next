@@ -5,6 +5,10 @@
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/game" />
+      <excludeFolder url="file://$MODULE_DIR$/mz/libs" />
+      <excludeFolder url="file://$MODULE_DIR$/splits" />
+      <excludeFolder url="file://$MODULE_DIR$/mz" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -1,4 +1,4 @@
-import { Vehicule, AudioObject, Terms, TestBattler } from '@data/RPG';
+import { Vehicle, AudioObject, Terms, TestBattler } from '@data/RPG';
 import { AttackMotion } from '@data/RPG/AttackMotion.ts';
 
 
@@ -17,7 +17,7 @@ export interface DataSystem {
     windowOpacity: number;
     picturesUpperLimit: number;
   };
-  airship: Vehicule;
+  airship: Vehicle;
   armorTypes: string[];
   attackMotions : AttackMotion[];
   battleBgm: AudioObject;
@@ -26,7 +26,7 @@ export interface DataSystem {
   battlerhHue: number;
   battlerName: string;
   battleSystem: BattleSystem;
-  boat: Vehicule;
+  boat: Vehicle;
   currencyUnit: string;
   defeatMe: AudioObject;
   editMapId: number
@@ -48,7 +48,7 @@ export interface DataSystem {
   optSlipDeath: boolean;
   optTransparent: boolean;
   partyMembers: number[];
-  ship: Vehicule;
+  ship: Vehicle;
   skillTypes: string[];
   sounds: AudioObject[]
   startMapId: number;

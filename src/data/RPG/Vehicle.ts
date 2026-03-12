@@ -1,6 +1,6 @@
 import { AudioObject } from './AudioObject.ts';
 
-export interface Vehicule {
+export interface Vehicle {
   bgm: AudioObject;
   characterIndex: number;
   characterName: string;

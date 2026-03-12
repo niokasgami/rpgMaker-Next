@@ -1,0 +1,8 @@
+{
+  "directory": "./src",
+  "delete": true,
+  "location": "all",
+  "structure": "flat",
+  "name": "index.ts",
+  "exclude": ["jsExtension.ts"]
+}

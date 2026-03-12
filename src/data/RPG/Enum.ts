@@ -1,7 +1,11 @@
 
 
 export enum EventTrigger {
-
+  ACTION_BUTTON = 0,
+  PLAYER_TOUCH = 1,
+  EVENT_TOUCH = 2,
+  AUTORUN = 3,
+  PARALLEL = 4
 }
 export enum CommonEventTrigger {
   NONE = 0,
