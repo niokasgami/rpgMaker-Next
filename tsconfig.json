@@ -30,5 +30,5 @@
       "@scenes/*": ["src/scenes/*"]
     }
   },
-  "include": ["src", "libs/**/*.d.ts", "main.ts"]
+  "include": ["src", "libs/**/*.d.ts", "main.ts", "test/src/**/*.ts"]
 }

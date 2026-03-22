@@ -144,7 +144,7 @@ Number.prototype.padZero = function(length: number): string {
 //==============================================================================
 // String
 //==============================================================================
-interface String {
+declare interface String {
   contains(string: string): boolean;
   format(...args: any[]): string;
   padZero(length: number): string;
@@ -182,4 +182,6 @@ String.prototype.format = function(): string {
 String.prototype.padZero = function(length: number): string {
   return this.padStart(length, "0");
 };
+
+
 

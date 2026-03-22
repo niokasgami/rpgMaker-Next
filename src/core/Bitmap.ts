@@ -352,8 +352,11 @@ export class Bitmap implements IContractualClass {
     if (!this._texture) return '#000000';
     const pixels = this.renderer.extract.pixels(this._texture).pixels;
     const index = (y * this._texture.width + x) * 4;
+    //@ts-ignore
     return '#' + pixels[index].toString(16).padZero(2) +
+      //@ts-ignore
       pixels[index + 1].toString(16).padZero(2) +
+      //@ts-ignore
       pixels[index + 2].toString(16).padZero(2);
   }
 

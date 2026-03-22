@@ -7,7 +7,10 @@
   "scripts": {
     "prebuild": "barrelsby -c ./barrelsby.json",
     "build": "rollup -c",
-    "splitFiles": "node mz/FileSplitter.js"
+    "splitFiles": "node mz/FileSplitter.js",
+    "start": "npm run dev:test",
+    "dev:test": "vite --config test/vite.config.ts",
+    "doc": "npm typedoc --options typedoc.json"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
@@ -20,7 +23,10 @@
     "@types/pako": "^2.0.4",
     "barrelsby": "^2.8.1",
     "rollup": "^4.40.2",
-    "typescript": "5.9.3"
+    "rollup-plugin-string-import": "^1.2.6",
+    "typescript": "5.9.3",
+    "vite": "^8.0.0",
+    "vite-plugin-glsl": "^1.5.5"
   },
   "private": true,
   "dependencies": {

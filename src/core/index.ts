@@ -3,6 +3,7 @@
  */
 
 export * from "./Bitmap";
+export * from "./ColorFilter";
 export * from "./Engine";
 export * from "./FpsCounter";
 export * from "./Input";
@@ -14,5 +15,6 @@ export * from "./Stack";
 export * from "./Stage";
 export * from "./Utils";
 export * from "./Video";
-export * from "./WebAudio";
+//export * from "./WebAudio";
+import "./jsExtension";
 export * from "./interfaces/index";
