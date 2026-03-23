@@ -27,7 +27,7 @@ export class TilingSprite extends PixiTilingSprite {
       texture: TilingSprite._emptyTexture,
       frame
     });
-
+    this.onRender = this._updateTransform.bind(this);
     this.initialize(...arguments);
   }
 
@@ -118,12 +118,14 @@ export class TilingSprite extends PixiTilingSprite {
 
   /**
    * Updates the transform on all children of this container for rendering.
+   * @remarks we dont use updateTransform as its deprecated for leaf nodes, we
+   * use onRender instead and we attach a function to it.
    */
-  override updateTransform(): this {
-    const options = {}; // for the moment its fine?? not sure tho
+  private _updateTransform() {
+   // const options = {}; // for the moment its fine?? not sure tho
     this.tilePosition.x = Math.round(-this.origin.x);
     this.tilePosition.y = Math.round(-this.origin.y);
-    return super.updateTransform(options);
+    //return super.updateTransform(options);
   }
 
   private _onBitmapChange() {

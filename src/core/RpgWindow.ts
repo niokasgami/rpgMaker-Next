@@ -103,6 +103,7 @@ export abstract class RpgWindow extends Container {
 
   protected constructor(...args: any[]) {
     super();
+    //this.onRender(this._updateTransform.bind(this));
     this.initialize(...arguments);
   }
 
