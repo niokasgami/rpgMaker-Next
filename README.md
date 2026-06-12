@@ -1,6 +1,7 @@
 <div align="center">
   <img src="./mz_logo.png" alt="RPG Maker MZ Next" width="500" />
 </div>
+
 ## The Modern RPG Maker MZ Framework
 
 > ⚠️ **Work in Progress** — This project is actively in development and is **not yet ready for production use**. APIs are subject to change, features may be incomplete, and breaking changes can occur at any time. Contributions and feedback are welcome, but use in live projects is discouraged until a stable release is announced.
