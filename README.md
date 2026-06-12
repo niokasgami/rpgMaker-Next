@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./mz_logo.png" alt="RPG Maker MZ Next" width="300" />
+  <img src="./mz_logo.png" alt="RPG Maker MZ Next" width="500" />
 </div>
 ## The Modern RPG Maker MZ Framework
 
