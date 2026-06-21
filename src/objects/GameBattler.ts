@@ -7,8 +7,6 @@ import { DataSkill } from '@data/DataSkill.ts';
 import { GameAction } from '@objects/GameAction.ts';
 import { GameParty } from '@objects/GameParty.ts';
 import { GameTroop } from '@objects/GameTroop.ts';
-import { GameUnit } from '@objects/GameUnit.ts';
-import { GameActor } from '@objects/GameActor.ts';
 import { GameActionResult } from '@objects/GameActionResult.ts';
 import { GameEnemy } from '@objects/GameEnemy.ts';
 

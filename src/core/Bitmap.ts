@@ -1,16 +1,24 @@
 import { Engine } from './Engine.ts';
 import {
   Assets,
-  AssetsClass, Color,
+  AssetsClass,
+  CanvasTextMetrics,
+  Color,
   Container,
-  EventEmitter, FillGradient, Graphics,
-  ImageSource, Point,
-  Rectangle, Renderer,
-  RenderTexture,
+  EventEmitter,
+  FillGradient,
+  Graphics,
+  ImageSource,
+  Point,
+  Rectangle,
   SCALE_MODE,
-  Sprite, TextStyleAlign,
-  Texture, WebGLRenderer
+  Sprite,
+  TextStyle,
+  Texture,
+  WebGLRenderer,
+  Text, TextStyleAlign, TextStyleOptions
 } from 'pixi.js';
+
 import { IContractualClass, RectangleLike } from './interfaces';
 import { Stage } from './Stage.ts';
 import { PingPongBuffer } from './PingPongBuffer.ts';
@@ -22,6 +30,7 @@ export enum LoadingState {
   ERROR
 }
 
+type TextAlign = 'left' | 'center' | 'right';
 type ScaleMode = SCALE_MODE;
 
 type BitmapEvent = 'load' | 'error' | 'complete';
@@ -78,11 +87,13 @@ export class Bitmap implements IContractualClass {
   private _alphaContainer: Container;
 
   private _originalSprite: Sprite; // for pooling / performance
-  private _blitSprite: Sprite; // for pooling / performance
+  private _mockSprite: Sprite; // for pooling / performance
+  private _textPool: Text; // for pooling / performance.
   private _graphics: Graphics;
   private _gradient: FillGradient;
   private _buffer: PingPongBuffer;
-  private renderer: WebGLRenderer<HTMLCanvasElement>;
+  private _renderer: WebGLRenderer<HTMLCanvasElement>;
+  private _textStyle: TextStyle | null = null;
 
 
   constructor(width = 0, height = 0) {
@@ -90,8 +101,9 @@ export class Bitmap implements IContractualClass {
   }
 
   initialize(width = 0, height = 0) {
+    console.log('initialize called with:', width, height);
     this._assets = Assets;
-    this.renderer = Engine.app.renderer;
+    this._renderer = Engine.app.renderer;
     this._eventEmitter = new EventEmitter();
     this._texture = null;
     this._url = '';
@@ -112,12 +124,18 @@ export class Bitmap implements IContractualClass {
       height,
       scaleMode: this._scaleMode
     });
+    // Seed _texture immediately from the buffer so it's never null for
+    // non-zero bitmaps. The buffer RenderTextures are valid (blank) GPU
+    // textures the moment PingPongBuffer is constructed, so this is safe.
+    if (width > 0 && height > 0) {
+      this._texture = this._buffer.getSource();
+    }
 
     // TODO : maybe remove the usage this._width and this._height they are just bloat tracking.
     this._width = width;
     this._height = height;
     this._originalSprite = new Sprite();
-    this._blitSprite = new Sprite();
+    this._mockSprite = new Sprite();
     this._graphics = new Graphics();
     this._gradient = new FillGradient({ type: 'linear', textureSpace: 'local' });
   }
@@ -203,7 +221,7 @@ export class Bitmap implements IContractualClass {
    * @readonly
    */
   get width(): number {
-    return this._texture ? this._texture.width : 0;
+    return this._texture ? this._texture.width : this._width;
   }
 
   /**
@@ -211,7 +229,7 @@ export class Bitmap implements IContractualClass {
    * @readonly
    */
   get height(): number {
-    return this._texture ? this._texture.height : 0;
+    return this._texture ? this._texture.height : this._height;
   }
 
   /**
@@ -249,6 +267,45 @@ export class Bitmap implements IContractualClass {
       this._paintOpacity = value;
       this.refreshPaintOpacity();
     }
+  }
+
+  /**
+   * Returns the bitmap's active TextStyle.
+   *
+   * If a custom TextStyle has been assigned via the setter, that style
+   * takes priority. Otherwise, a TextStyle is generated from the legacy
+   * font properties ({@link fontFace}, {@link fontSize}, {@link fontBold},
+   * {@link fontItalic}, {@link textColor}, {@link outlineColor}, {@link outlineWidth}),
+   * preserving full backwards compatibility with existing MZ bitmap API usage.
+   *
+   * @example
+   * // Legacy MZ style (auto-generated TextStyle):
+   * bitmap.fontSize = 28;
+   * bitmap.textColor = '#ff0000';
+   *
+   * // Pixi TextStyle (takes priority):
+   * bitmap.textStyle = new TextStyle({ fontSize: 28, fill: '#ff0000' });
+   *
+   * @see {@link TextStyle} for the full Pixi text style API.
+   * @see {@link resetTextStyle} to clear a custom style and fall back to legacy properties.
+   */
+  get textStyle(): TextStyle {
+    return this._textStyle ?? new TextStyle({
+      fontFamily: this.fontFace,
+      fontSize: this.fontSize,
+      fontWeight: this.fontBold ? 'bold' : 'normal',
+      fontStyle: this.fontItalic ? 'italic' : 'normal',
+      fill: this.textColor,
+      stroke: { color: this.outlineColor, width: this.outlineWidth * 2 },
+    });
+  }
+
+  set textStyle(style: TextStyle) {
+    this._textStyle = style;
+  }
+
+  resetTextStyle(): void {
+    this._textStyle = null;
   }
 
   /**
@@ -318,27 +375,23 @@ export class Bitmap implements IContractualClass {
     const { x: dx, y: dy } = destRect;
     const dw = destRect.width || sw;
     const dh = destRect.height || sh;
-    // we launch the process
+
     try {
-      this._originalSprite.texture = this._buffer.getSource();
-      this._blitSprite.texture = new Texture({
+      this._mockSprite.texture = new Texture({
         source: source._texture.source,
         frame: new Rectangle(sx, sy, sw, sh)
       });
-      this._blitSprite.position.set(dx, dy);
-      this._blitSprite.scale.set(dw / sw, dh / sh);
-      this._alphaContainer.addChild(this._originalSprite, this._blitSprite);
-
-      // todo : maybe shorten this function since we repeating a lot of code?
-      this.renderer.render({ container: this._alphaContainer, target: this._buffer.getTarget(), clear: false });
-      this._alphaContainer.removeChild(this._originalSprite, this._blitSprite);
-      this._buffer.swap();
-      this._texture = this._buffer.getSource();
-      this._texture.update();
-
+      this._mockSprite.position.set(dx, dy);
+      this._mockSprite.scale.set(dw / sw, dh / sh);
+      this.renderToBuffer(this._mockSprite);
     } catch (e: any) {
       throw new Error(e);
     }
+  }
+
+  async inspect(): Promise<void> {
+    const image = await this._renderer.extract.image(this._buffer.getSource());
+    document.body.appendChild(image);
   }
 
   /**
@@ -350,7 +403,7 @@ export class Bitmap implements IContractualClass {
    */
   getPixel(x: number, y: number): string {
     if (!this._texture) return '#000000';
-    const pixels = this.renderer.extract.pixels(this._texture).pixels;
+    const pixels = this._renderer.extract.pixels(this._texture).pixels;
     const index = (y * this._texture.width + x) * 4;
     //@ts-ignore
     return '#' + pixels[index].toString(16).padZero(2) +
@@ -370,7 +423,7 @@ export class Bitmap implements IContractualClass {
   getAlphaPixel(x: number, y: number): number {
     if (!this._texture) return 0;
     // Get all pixels
-    const pixels = this.renderer.extract.pixels(this._texture).pixels;
+    const pixels = this._renderer.extract.pixels(this._texture).pixels;
     // Calculate the pixel position in the array (4 values per pixel: R,G,B,A)
     const index = (y * this._texture.width + x) * 4;
     // Return the alpha value (the 4th value in the RGBA array)
@@ -390,14 +443,9 @@ export class Bitmap implements IContractualClass {
     this._graphics.rect(x, y, width, height)
       .fill(0x000000);
     this._graphics.blendMode = 'erase';
-    this._originalSprite.texture = this._buffer.getSource();
-    this._alphaContainer.addChild(this._originalSprite, this._graphics);
-    this.renderer.render({ container: this._alphaContainer, target: this._buffer.getTarget(), clear: false });
-    this._buffer.swap();
-    this._texture = this._buffer.getSource();
-    this._alphaContainer.removeChild(this._originalSprite, this._graphics);
+
+    this.renderToBuffer(this._graphics);
     this._graphics.blendMode = 'normal';
-    this._texture.update();
   }
 
   /**
@@ -421,14 +469,7 @@ export class Bitmap implements IContractualClass {
         alpha: this.getColor(color).alpha
       });
 
-    this._originalSprite.texture = this._buffer.getSource();
-    this._alphaContainer.addChild(this._originalSprite, this._graphics);
-    this.renderer.render({ container: this._alphaContainer, target: this._buffer.getTarget(), clear: false });
-    // we should always swap the buffer to assure the texture is up to date.
-    this._buffer.swap();
-    this._texture = this._buffer.getSource();
-    this._alphaContainer.removeChild(this._originalSprite, this._graphics);
-    this._texture.update();
+    this.renderToBuffer(this._graphics);
   }
 
   /**
@@ -455,13 +496,7 @@ export class Bitmap implements IContractualClass {
           width: lineWidth,
           alpha: this.getColor(color).alpha
         });
-    this._originalSprite.texture = this._buffer.getSource();
-    this._alphaContainer.addChild(this._originalSprite, this._graphics);
-    this.renderer.render({ container: this._alphaContainer, target: this._buffer.getTarget(), clear: false });
-    this._buffer.swap();
-    this._alphaContainer.removeChild(this._graphics);
-    this._texture = this._buffer.getSource();
-    this._texture.update();
+    this.renderToBuffer(this._graphics);
   }
 
   /**
@@ -495,13 +530,8 @@ export class Bitmap implements IContractualClass {
     this._graphics
       .rect(rect.x, rect.y, rect.width, rect.height)
       .fill(this._gradient);
-    this._originalSprite.texture = this._buffer.getSource();
-    this._alphaContainer.addChild(this._originalSprite, this._graphics);
-    this.renderer.render({ container: this._alphaContainer, target: this._buffer.getTarget(), clear: false });
-    this._alphaContainer.removeChild(this._graphics);
-    this._buffer.swap();
-    this._texture = this._buffer.getSource();
-    this._texture.update();
+
+    this.renderToBuffer(this._graphics);
   }
 
   /**
@@ -519,24 +549,80 @@ export class Bitmap implements IContractualClass {
         color: this.getColor(color).toNumber(),
         alpha: this.getColor(color).alpha
       });
-    this._originalSprite.texture = this._buffer.getSource();
-    this._alphaContainer.addChild(this._originalSprite, this._graphics);
-    this.renderer.render({ container: this._alphaContainer, target: this._buffer.getTarget(), clear: false });
-    this._buffer.swap();
-    this._alphaContainer.removeChild(this._graphics);
-    this._texture = this._buffer.getSource();
-    this._texture.update();
+    this.renderToBuffer(this._graphics);
   }
 
-  //TODO : actually implement that function
+
+  /**
+   * Draws a text string onto the bitmap.
+   *
+   * Text rendering uses the active {@link textStyle} for font, color, and stroke properties.
+   * If no custom {@link TextStyle} has been assigned, the style is auto-generated from the
+   * legacy font properties ({@link fontFace}, {@link fontSize}, {@link fontBold},
+   * {@link fontItalic}, {@link textColor}, {@link outlineColor}, {@link outlineWidth}).
+   *
+   * @remarks
+   * Word wrapping is intentionally disabled — MZ handles its own line breaking upstream
+   * via escape code processing (`\n`, `\C[n]`, etc.) before `drawText` is called.
+   * `maxWidth` only affects the horizontal alignment origin, not wrapping behavior.
+   *
+   * @param text - The text string to draw.
+   * @param x - The x coordinate of the left edge of the text area.
+   * @param y - The y coordinate of the top edge of the text area.
+   * @param maxWidth - The maximum width of the text area in pixels.
+   * Defaults to `0xffffffff` (unconstrained) if not specified.
+   * @param lineHeight - The height of the line in pixels. Used to vertically
+   * center the text within the line via baseline offset calculation.
+   * @param align - The horizontal alignment of the text within the text area.
+   * Accepts `'left'`, `'center'`, or `'right'`.
+   *
+   * @example
+   * // Draw centered white text with default style
+   * bitmap.drawText('Hello World', 0, 0, 400, 36, 'center');
+   *
+   * @example
+   * // Draw with a custom TextStyle
+   * bitmap.textStyle = new TextStyle({ fontSize: 32, fill: '#ff0000' });
+   * bitmap.drawText('Red Text', 0, 0, 400, 36, 'left');
+   * @experimental This still need intensive testing to see if the new API matches MZ old canvas Text rendering.
+   */
+
   drawText(text: string, x: number, y: number, maxWidth: number, lineHeight: number, align: TextStyleAlign) {
-    // code
+    maxWidth = maxWidth || 0xffffffff;
+    const ty = Math.round(y + lineHeight / 2 + this.fontSize * 0.35);
+
+    let tx = x;
+    if (align === 'center') tx += maxWidth / 2;
+    if (align === 'right') tx += maxWidth;
+
+    const style = this.textStyle.clone();
+    style.align = align;
+    style.wordWrap = false;
+
+    this._textPool.text = text;
+    this._textPool.style = style;
+    this._textPool.x = tx;
+    this._textPool.y = ty;
+    this._textPool.anchor.x = align === 'center' ? 0.5
+      : align === 'right' ? 1
+        : 0;
+
+    this.renderToBuffer(this._textPool);
   }
 
+
+  /**
+   * measure the text width.
+   * @param text - the text to be measured
+   */
   measureTextWidth(text: string): number {
-    return 0;
+    // todo : bake this
+    const style = new TextStyle({
+      fontFamily: this.fontFace,
+      fontSize: this.fontSize
+    });
+    return CanvasTextMetrics.measureText(text, style).width;
   }
-
 
   /**
    * subscribe to a bitmap event
@@ -552,18 +638,52 @@ export class Bitmap implements IContractualClass {
    * @param context - the callback context
    */
   on(bitmapEvent: BitmapEvent | string, callback: (...arg: any[]) => void, context?: any): EventEmitter<string | symbol, any> {
-   return this._eventEmitter.on(bitmapEvent, callback, context);
+    return this._eventEmitter.on(bitmapEvent, callback, context);
   }
-  //TODO : do the documentation
+
+  /**
+   * subscribe to a bitmap event for only one time.
+   * @remarks the Bitmap class will automatically call 3 events:
+   *
+   *          - load: Event called when the loading is being loaded
+   *
+   *          - complete: Event called when the loading is complete
+   *
+   *          - error: Event called when the loading is error
+   * @param bitmapEvent - the bitmap event to subscribe to
+   * @param callback - the callback function to call when the event is triggered
+   * @param context - the callback context
+   */
   once(bitmapEvent: BitmapEvent | string, callback: (...arg: any[]) => void, context?: any): EventEmitter<string | symbol, any> {
     return this._eventEmitter.once(bitmapEvent, callback, context);
   }
-  // TODO : do the documentation
-  emit(bitmapEvent: BitmapEvent | string): boolean {
-    return this._eventEmitter.emit(bitmapEvent);
+
+  /**
+   * emit a bitmap event to all subscribed function
+   * @param bitmapEvent - the bitmap event to call.
+   * @param args - optionals function
+   */
+  emit(bitmapEvent: BitmapEvent | string, ...args: any[]): boolean {
+    return this._eventEmitter.emit(bitmapEvent, args);
+  }
+
+  /**
+   * callback function to make sure if a bitmap is truly ready. if not you assign an callback
+   * to call once it's done.
+   * @param callback
+   */
+  onceLoaded(callback: () => void) {
+    if (this.isReady()) {
+      callback();
+    } else {
+      this.once('complete', callback);
+    }
   }
 
 
+  /**
+   * retry loading the bitmap.
+   */
   async retry() {
     await this.startLoading();
   }
@@ -577,7 +697,7 @@ export class Bitmap implements IContractualClass {
    * @param clear - whether to clear the bitmap before rendering the container
    */
   renderTo(container: Container, clear = true): void {
-    this.renderer.render({
+    this._renderer.render({
       container,
       target: this._buffer.getTarget(),
       clear
@@ -587,6 +707,10 @@ export class Bitmap implements IContractualClass {
     this._texture.update();
   }
 
+  /**
+   * Assign a texture to the bitmap and resize the buffer
+   * @param texture - the new texture to assign.
+   */
   assignTexture(texture: Texture<ImageSource>) {
     this._texture = texture;
     this._width = this._texture.width;
@@ -596,6 +720,16 @@ export class Bitmap implements IContractualClass {
   }
 
   /// PRIVATE FUNCTION
+
+  private renderToBuffer(...children: Container[]): void {
+    this._originalSprite.texture = this._buffer.getSource();
+    this._alphaContainer.addChild(this._originalSprite, ...children);
+    this._renderer.render({ container: this._alphaContainer, target: this._buffer.getTarget(), clear: false });
+    this._buffer.swap();
+    this._alphaContainer.removeChild(this._originalSprite, ...children);
+    this._texture = this._buffer.getSource();
+    this._texture.update();
+  }
 
   private async startLoading() {
     this._loadingState = LoadingState.LOADING;
@@ -609,21 +743,20 @@ export class Bitmap implements IContractualClass {
       this._buffer.resize(this._width, this._height);
       this.ensureRenderTexture();
       this._loadingState = LoadingState.LOADED;
-      this._eventEmitter.emit('complete');
+      this.emit('complete');
 
     } catch (e: any) {
       this._loadingState = LoadingState.ERROR;
-      this._eventEmitter.emit('error', e);
+      this.emit('error', e);
     }
 
 
   }
 
   private ensureRenderTexture() {
-    if (!this._buffer.hasSource()) {
-      this._originalSprite.texture = this._texture;
-      this._buffer.assign(this._originalSprite);
-    }
+    if (this._buffer.hasSource()) return;
+    this._originalSprite.texture = this._texture;
+    this._buffer.assign(this._originalSprite);
   }
 
   private updateScaleMode() {
@@ -641,7 +774,6 @@ export class Bitmap implements IContractualClass {
   private getColor(color: string): Color {
     return Color.shared.setValue(color);
   }
-
 
 
 }

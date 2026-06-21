@@ -1,6 +1,7 @@
 import { BLEND_MODES, Filter, Rectangle, Sprite as PixiSprite, Texture, TextureSource } from 'pixi.js';
 import { Bitmap } from '@core/Bitmap.ts';
 import { ColorFilter } from '@core/ColorFilter.ts';
+import { arraysEqual, clamp, cloneArray } from '@core/jsExtension.ts';
 
 
 const BLEND_MODE_MAP: Record<number, BLEND_MODES> = {
@@ -136,7 +137,7 @@ export class Sprite extends PixiSprite {
   }
 
   set opacity(value: number) {
-    this.alpha = value.clamp(0, 255) / 255;
+    this.alpha = clamp(value, 0,255) / 255;
   }
 
 
@@ -236,7 +237,7 @@ export class Sprite extends PixiSprite {
    * @returns The blend color [r, g, b, a].
    */
   getBlendColor(): number[] {
-    return this._blendColor.clone();
+    return cloneArray<number>(this._blendColor);
   }
 
   /**
@@ -248,8 +249,8 @@ export class Sprite extends PixiSprite {
     if (!(color instanceof Array)) {
       throw new Error('Argument must be an array');
     }
-    if (!this._blendColor.equals(color)) {
-      this._blendColor = color.clone();
+    if (!arraysEqual(this._blendColor, color)) {
+      this._blendColor = cloneArray(color);
       this._updateColorFilter();
     }
   }
@@ -260,15 +261,15 @@ export class Sprite extends PixiSprite {
    * @returns {array} The color tone [r, g, b, gray].
    */
   getColorTone(): number[] {
-    return this._colorTone.clone();
+    return cloneArray<number>(this._colorTone);
   }
 
   setColorTone(tone: number[]) {
     if (!(tone instanceof Array)) {
       throw new Error('Argument must be an array');
     }
-    if (!this._colorTone.equals(tone)) {
-      this._colorTone = tone.clone();
+    if (!arraysEqual(this._colorTone, tone)) {
+      this._colorTone = cloneArray(tone);
       this._updateColorFilter();
     }
   }
@@ -329,10 +330,10 @@ export class Sprite extends PixiSprite {
 
     const sourceW = textureSource ? textureSource.width : 0;
     const sourceH = textureSource ? textureSource.height : 0;
-    const realX = frameX.clamp(0, sourceW);
-    const realY = frameY.clamp(0, sourceH);
-    const realW = (frameW - realX + frameX).clamp(0, sourceW - realX);
-    const realH = (frameH - realY + frameY).clamp(0, sourceH - realY);
+    const realX = clamp(frameX,0,sourceW);
+    const realY = clamp(frameY, 0, sourceH);
+    const realW = clamp(frameW - realX + frameX, 0, sourceW - realX);
+    const realH = clamp(frameH - realY + frameY, 0, sourceH - realY);
     const frame = new Rectangle(realX, realY, realW, realH);
     if (!this.texture) return;
     this.pivot.x = frameX - realX;

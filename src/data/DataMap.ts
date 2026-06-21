@@ -1,5 +1,6 @@
-import { AudioObject, RpgEvent } from '@data/RPG';
-import { Encounter } from '@data/RPG/Encounter.ts';
+import { AudioObject, Encounter } from '@data/RPG';
+import { RpgEvent } from '@data/rpg-event.ts';
+
 
 export interface DataMap {
   autoplayBgm: boolean;
@@ -10,7 +11,7 @@ export interface DataMap {
   bgs: AudioObject;
   disableDashing: boolean;
   displayName: string;
-  encounterList: Encounter[]
+  encounterList: Encounter[];
   encounterStep: number;
   height: number;
   note: string;
@@ -25,5 +26,5 @@ export interface DataMap {
   tilesetId: number;
   width: number;
   data: number[];
-  events: RpgEvent[]
+  events: RpgEvent[];
 }

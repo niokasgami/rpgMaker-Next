@@ -1,12 +1,9 @@
-import { BaseData } from '@data/BaseData.ts';
-import { PageList } from '@data/RPG';
-import { CommonEventTrigger } from '@data/RPG/Enum.ts';
-
+import { CommonEventTrigger, PageList } from '@data/RPG';
 
 
 export interface DataCommonEvent {
   id: number;
-  list: PageList[]
+  list: PageList[];
   name: string;
   switchId: number;
   trigger: CommonEventTrigger;

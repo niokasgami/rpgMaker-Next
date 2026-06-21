@@ -34,6 +34,7 @@ interface bufferOptions {
  * const source = buffer.getSource();
  * const target = buffer.getTarget();
  *
+ * const mySprite = Sprite.from(source);
  * // Render something
  * renderer.render({ container: mySprite, target });
  *
@@ -70,6 +71,13 @@ export class PingPongBuffer {
       .rect(0, 0, options.width, options.height)
       .fill(0x000000);
     this._graphics.blendMode = 'erase';
+
+
+    // If constructed with real dimensions, the RenderTextures are valid blank
+    // GPU textures immediately — no assign() call needed, mark as initialized.
+    if (options.width > 0 && options.height > 0) {
+      this._hasBeenInitialized = true;
+    }
   }
 
 
@@ -148,6 +156,10 @@ export class PingPongBuffer {
     this._graphics.destroy();
   }
 
+  /**
+   * manually assign an existing texture to the buffer.
+   * @param container - a valid container to render from.
+   */
   assign(container: Container){
     const renderer = Engine.app.renderer;
     const source = this.getSource();
@@ -157,6 +169,9 @@ export class PingPongBuffer {
     this._hasBeenInitialized = true;
   }
 
+  /**
+   * check whether the buffer already has a texture source.
+   */
   hasSource(): boolean {
     return this._hasBeenInitialized;
   }

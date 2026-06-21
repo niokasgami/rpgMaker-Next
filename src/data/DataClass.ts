@@ -1,10 +1,11 @@
+import { Learning, TraitData } from '@data/RPG';
 import { BaseData } from '@data/BaseData.ts';
-import { Learning, Trait } from '@data/RPG';
 
 
 export interface DataClass extends BaseData {
   expParams: number[];
-  traits: Trait[];
+  traits: TraitData[];
   learnings: Learning[];
+  /** params[paramId][level] */
   params: number[][];
 }

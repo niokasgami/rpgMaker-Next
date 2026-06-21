@@ -1,187 +1,59 @@
-/**
- * This section contains some methods that will be added to the standard
- * Javascript objects.
- *
- * @namespace JsExtensions
- */
+// utils/jsExtensions.ts
 
-//==============================================================================
 // Array
-//==============================================================================
-
-declare interface Array<T> {
-  clone(): Array<T>;
-  equals(array: Array<T>): boolean;
-  remove(element: any): Array<T>;
+export function cloneArray<T>(array: T[]): T[] {
+  return array.slice(0);
 }
-/**
- * Makes a shallow copy of the array.
- *
- * @memberof JsExtensions
- * @returns {array} A shallow copy of the array.
- */
-Array.prototype.clone = function(): Array<any> {
-  return this.slice(0);
-};
 
-Object.defineProperty(Array.prototype, "clone", {
-  enumerable: false
-});
-
-
-/**
- * Checks whether the two arrays are the same.
- *
- * @memberof JsExtensions
- * @param {array} array - The array to compare to.
- * @returns {boolean} True if the two arrays are the same.
- */
-Array.prototype.equals = function(array) {
-  if (!array || this.length !== array.length) {
-    return false;
-  }
-  for (let i = 0; i < this.length; i++) {
-    if (this[i] instanceof Array && array[i] instanceof Array) {
-      if (!this[i].equals(array[i])) {
-        return false;
-      }
-    } else if (this[i] !== array[i]) {
+export function arraysEqual<T>(a: T[], b: T[]): boolean {
+  if (!b || a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] instanceof Array && b[i] instanceof Array) {
+      if (!arraysEqual(a[i] as any[], b[i] as any[])) return false;
+    } else if (a[i] !== b[i]) {
       return false;
     }
   }
   return true;
-};
+}
 
-Object.defineProperty(Array.prototype, "equals", {
-  enumerable: false
-});
-
-/**
- * Removes a given element from the array (in place).
- *
- * @memberof JsExtensions
- * @param {any} element - The element to remove.
- * @returns {array} The array after remove.
- */
-Array.prototype.remove = function(element: any): Array<any> {
+export function removeFromArray<T>(array: T[], element: T): T[] {
   for (;;) {
-    const index = this.indexOf(element);
+    const index = array.indexOf(element);
     if (index >= 0) {
-      this.splice(index, 1);
+      array.splice(index, 1);
     } else {
-      return this;
+      return array;
     }
   }
-};
+}
 
-Object.defineProperty(Array.prototype, "remove", {
-  enumerable: false
-});
-
-//==============================================================================
 // Math
-//==============================================================================
-
-interface Math {
-  randomInt(max: number): number;
-}
-
-/**
- * Generates a random integer in the range (0, max-1).
- *
- * @memberof JsExtensions
- * @param {number} max - The upper boundary (excluded).
- * @returns {number} A random integer.
- */
-Math.randomInt = function(max: number): number {
+export function randomInt(max: number): number {
   return Math.floor(max * Math.random());
-};
-//==============================================================================
+}
+
 // Number
-//==============================================================================
-
-declare interface Number {
-  clamp(min: number, max: number): number;
-  mod(n: number): number;
-  padZero(length: number): string;
+export function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
 }
 
-/**
- * Returns a number whose value is limited to the given range.
- *
- * @memberof JsExtensions
- * @param {number} min - The lower boundary.
- * @param {number} max - The upper boundary.
- * @returns {number} A number in the range (min, max).
- */
-Number.prototype.clamp = function(min: number, max: number): number {
-  //@ts-ignore
-  return Math.min(Math.max(this, min), max);
-};
+export function mod(value: number, n: number): number {
+  return ((value % n) + n) % n;
+}
 
-/**
- * Returns a modulo value which is always positive.
- *
- * @memberof JsExtensions
- * @param {number} n - The divisor.
- * @returns {number} A modulo value.
- */
-Number.prototype.mod = function(n: number): number {
-  //@ts-ignore
-  return ((this % n) + n) % n;
-};
+export function padZero(value: string | number, length: number): string {
+  return String(value).padStart(length, "0");
+}
 
-/**
- * Makes a number string with leading zeros.
- *
- * @memberof JsExtensions
- * @param {number} length - The length of the output string.
- * @returns {string} A string with leading zeros.
- */
-Number.prototype.padZero = function(length: number): string {
-  return String(this).padZero(length);
-};
-//==============================================================================
 // String
-//==============================================================================
-declare interface String {
-  contains(string: string): boolean;
-  format(...args: any[]): string;
-  padZero(length: number): string;
+export function containsString(str: string, search: string): boolean {
+  return str.includes(search);
 }
-/**
- * Checks whether the string contains a given string.
- *
- * @memberof JsExtensions
- * @param {string} string - The string to search for.
- * @returns {boolean} True if the string contains a given string.
- * @deprecated includes() should be used instead.
- */
-String.prototype.contains = function(string: string): boolean {
-  return this.includes(string);
-};
 
-/**
- * Replaces %1, %2 and so on in the string to the arguments.
- *
- * @memberof JsExtensions
- * @param {any} ...args The objects to format.
- * @returns {string} A formatted string.
- */
-String.prototype.format = function(): string {
-  return this.replace(/%([0-9]+)/g, (s, n) => arguments[Number(n) - 1]);
-};
-
-/**
- * Makes a number string with leading zeros.
- *
- * @memberof JsExtensions
- * @param {number} length - The length of the output string.
- * @returns {string} A string with leading zeros.
- */
-String.prototype.padZero = function(length: number): string {
-  return this.padStart(length, "0");
-};
+export function formatString(template: string, ...args: any[]): string {
+  return template.replace(/%([0-9]+)/g, (s, n) => args[Number(n) - 1]);
+}
 
 
 

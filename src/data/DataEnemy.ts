@@ -1,9 +1,9 @@
 import { BaseData } from '@data/BaseData.ts';
-import { Action, DropItem, TraitData } from '@data/RPG';
+import { ActionData, DropItem, TraitData } from '@data/RPG';
 
 
 export interface DataEnemy extends BaseData {
-  actions: Action[];
+  actions: ActionData[];
   battlerHue: number;
   battlerName: string;
   dropItems: DropItem[];

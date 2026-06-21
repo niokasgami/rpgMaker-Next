@@ -1,35 +1,53 @@
-import { Vehicle, AudioObject, Terms, TestBattler } from '@data/RPG';
-import { AttackMotion } from '@data/RPG/AttackMotion.ts';
+import {
+  Vehicle,
+  AudioObject,
+  Terms,
+  TestBattler,
+  TitleCommandWindow,
+  BattleSystem,
+  JsonFormatLevel,
+  AttackMotion
+} from '@data/RPG';
 
+
+
+
+export interface SystemAdvanced {
+  gameId: number;
+  screenWidth: number;
+  screenHeight: number;
+  uiAreaWidth: number;
+  uiAreaHeight: number;
+  numberFontFilename: string;
+  fallbackFonts: string;
+  fontSize: number;
+  mainFontFilename: string;
+  screenScale: number;
+  windowOpacity: number;
+  picturesUpperLimit: number;
+}
+
+export interface SystemEditor {
+  messageWidth1: number;
+  messageWidth2: number;
+  jsonFormatLevel: JsonFormatLevel;
+}
 
 export interface DataSystem {
-  advanced : {
-    gameId: number;
-    screenWidth: number;
-    screenHeight: number;
-    uiAreaWidth: number;
-    uiAreaHeight: number;
-    numberFontFilename: string;
-    fallbackFonts: string;
-    fontSize: number;
-    mainFontFilename: string;
-    screenScale: number;
-    windowOpacity: number;
-    picturesUpperLimit: number;
-  };
+  advanced: SystemAdvanced;
   airship: Vehicle;
   armorTypes: string[];
-  attackMotions : AttackMotion[];
+  attackMotions: AttackMotion[];
   battleBgm: AudioObject;
   battleback1Name: string;
   battleback2Name: string;
-  battlerhHue: number;
+  battlerHue: number;
   battlerName: string;
   battleSystem: BattleSystem;
   boat: Vehicle;
   currencyUnit: string;
   defeatMe: AudioObject;
-  editMapId: number
+  editMapId: number;
   elements: string[];
   equipTypes: string[];
   gameTitle: string;
@@ -50,32 +68,24 @@ export interface DataSystem {
   partyMembers: number[];
   ship: Vehicle;
   skillTypes: string[];
-  sounds: AudioObject[]
+  sounds: AudioObject[];
   startMapId: number;
   startX: number;
   startY: number;
   switches: string[];
   terms: Terms;
-  testBattlers: TestBattler[]
+  testBattlers: TestBattler[];
   testTroopId: number;
   title1Name: string;
   title2Name: string;
   titleBgm: AudioObject;
-  titleCommandWindow : {
-    background: number;
-    offsetX: number;
-    offsetY: number;
-  };
+  titleCommandWindow: TitleCommandWindow;
   variables: string[];
   versionId: number;
   victoryMe: AudioObject;
   weaponTypes: string[];
-  windowTone: [number, number, number, number];
-  editor: {
-    messageWidth1: number;
-    messageWidth2: number;
-    jsonFormatLevel: JsonFormatLevel
-  };
+  windowTone: number[];
+  editor: SystemEditor;
   faceSize: number;
   iconSize: number;
   optSplashScreen: boolean;
@@ -83,12 +93,4 @@ export interface DataSystem {
   tileSize: number;
 }
 
-export enum JsonFormatLevel {
-  MINIFIED = 1,
-  PRETTIFIED = 2
-}
-export enum BattleSystem {
-  TURN_BASED = 0,
-  ATB_ACTIVE = 1,
-  ATB_WAIT = 2
-}
+

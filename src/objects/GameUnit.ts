@@ -6,7 +6,7 @@ export abstract class GameUnit<T extends GameBattler>  {
 
   protected _inBattle: boolean;
 
-  protected constructor() {
+  constructor() {
     this.initialize(...arguments);
   }
 

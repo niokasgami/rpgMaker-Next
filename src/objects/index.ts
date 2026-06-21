@@ -16,6 +16,7 @@ export * from "./GameEnemy";
 export * from "./GameEvent";
 export * from "./GameFollower";
 export * from "./GameFollowers";
+export * from "./GameEvent";
 export * from "./GameInterpreter";
 export * from "./GameItem";
 export * from "./GameMap";

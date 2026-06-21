@@ -1,0 +1,17 @@
+export enum ScopeType {
+  None = 0,
+  OneEnemy = 1,
+  AllEnemies = 2,
+  OneRandomEnemy = 3,
+  TwoRandomEnemies = 4,
+  ThreeRandomEnemies = 5,
+  FourRandomEnemies = 6,
+  OneAliveAlly = 7,
+  AllAlliesAlive = 8,
+  OneDeadAlly = 9,
+  AllAlliesDead = 10,
+  User = 11,
+  OneAllyUnconditional = 12,
+  AllAlliesUnconditional = 13,
+  EnemiesAndAllies = 14,
+}

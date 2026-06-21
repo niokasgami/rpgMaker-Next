@@ -28,7 +28,15 @@ export class ImageManager {
 
   private static _cache : Map<string, Bitmap> = new Map();
   private static _system : Map<string, Bitmap> = new Map();
-  private static _emptyBitmap = new Bitmap(1,1);
+
+  private static _emptyBitmap: Bitmap | null = null;
+
+  private static getEmptyBitmap(): Bitmap {
+    if (!this._emptyBitmap) {
+      this._emptyBitmap = new Bitmap(1, 1);
+    }
+    return this._emptyBitmap;
+  }
 
   /**
    * The icon width
@@ -197,12 +205,12 @@ export class ImageManager {
    * @param folder - the img directory folder
    * @param filename - the image name
    */
-  static async loadBitmap(folder : string,filename: string): Promise<Bitmap> {
-    if(filename){
+  static async loadBitmap(folder: string, filename: string): Promise<Bitmap> {
+    if (filename) {
       const url = folder + Utils.encodeURI(filename) + ".png";
       return await this.loadBitmapFromUrl(url);
     } else {
-      return this._emptyBitmap;
+      return this.getEmptyBitmap(); // ← lazy, not static initializer
     }
   }
 

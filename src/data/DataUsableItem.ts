@@ -1,5 +1,4 @@
-import { ItemDamage, ItemEffect } from '@data/RPG';
-import { HitType, OccasionType, ScopeType } from '@data/RPG/Enum.ts';
+import { HitType, ItemDamage, ItemEffect, OccasionType, ScopeType } from '@data/RPG';
 import { DataItemBase } from '@data/DataItemBase.ts';
 
 export interface DataUsableItem extends DataItemBase {
@@ -8,7 +7,6 @@ export interface DataUsableItem extends DataItemBase {
   effects: ItemEffect[];
   hitType: HitType;
   occasion: OccasionType;
-  repeats: number;
   scope: ScopeType;
   speed: number;
   successRate: number;

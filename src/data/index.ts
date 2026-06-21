@@ -21,6 +21,6 @@ export * from "./DataTileset";
 export * from "./DataTroop";
 export * from "./DataUsableItem";
 export * from "./DataWeapon";
-export * from "./ItemType";
+export * from "./rpg-event";
 export * from "./SavefileInfo";
-export * from "./RPG/index";
+export * from "./RPG";

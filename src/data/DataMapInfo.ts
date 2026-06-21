@@ -7,5 +7,5 @@ export interface DataMapInfo {
   parentId: number;
   scrollX: number;
   scrollY: number;
-  quick: false;
+  quick: boolean;
 }

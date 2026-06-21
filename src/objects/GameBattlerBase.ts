@@ -1,14 +1,13 @@
 import { IContractualClass } from '../core/interfaces';
 import { $dataSkills, $dataStates, $gameParty, DataManager } from '@managers';
 import { DataState } from '@data/DataState.ts';
-import { ItemDamage, TraitData } from '@data/RPG';
+import { ItemDamage, OccasionType, TraitData } from '@data/RPG';
 import { DataSkill } from '@data/DataSkill.ts';
 import { DataItem } from '@data/DataItem.ts';
 import { DataUsableItem } from '@data/DataUsableItem.ts';
 import { DataEquipable } from '@data/DataEquipable.ts';
 import { DataWeapon } from '@data/DataWeapon.ts';
 import { DataArmor } from '@data/DataArmor.ts';
-import { OccasionType } from '@data/RPG/Enum.ts';
 import { GameActors } from '@objects/GameActors.ts';
 import { GameActor } from '@objects/GameActor.ts';
 import { GameEnemy } from '@objects/GameEnemy.ts';
@@ -1452,9 +1451,9 @@ export abstract class GameBattlerBase implements IContractualClass {
    */
   isOccasionOk(item: DataUsableItem): boolean {
     if ($gameParty.inBattle()) {
-      return item.occasion ===  OccasionType.ALWAYS|| item.occasion === OccasionType.BATTLE_SCREEN;
+      return item.occasion ===  OccasionType.Always || item.occasion === OccasionType.BattleScreen;
     } else {
-      return item.occasion === OccasionType.ALWAYS || item.occasion === OccasionType.MENU_SCREEN;
+      return item.occasion === OccasionType.Always || item.occasion === OccasionType.MenuScreen;
     }
   }
 

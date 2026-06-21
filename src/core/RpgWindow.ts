@@ -2,6 +2,7 @@ import {
   AlphaFilter,
   Container,
   ContainerChild,
+  DestroyOptions,
   Graphics,
   Point,
   Rectangle,
@@ -11,6 +12,8 @@ import { Bitmap } from '@core/Bitmap.ts';
 import { Sprite } from '@core/Sprite.ts';
 import { NineSliceSprite } from '@core/NineSliceSprite.ts';
 import { TilingSprite } from '@core/TilingSprite.ts';
+import { clamp } from '@core/jsExtension.ts';
+import { FrameSprite } from '@core/FrameSprite.ts';
 
 
 export interface UpdatableChildren extends ContainerChild {
@@ -40,9 +43,9 @@ export abstract class RpgWindow extends Container {
   protected _innerChildren: ContainerChild[];
   protected _container: Container;
   protected _backSprite: Container<ContainerChild>;
-  protected _frameSprite: NineSliceSprite;
+  protected _frameSprite: FrameSprite;
   protected _contentsBackSprite: Sprite;
-  protected _cursorSprite: NineSliceSprite;
+  protected _cursorSprite: NineSliceSprite; // TODO : wtf? when did I did that
   protected _contentsSprite: Sprite;
   protected _downArrowSprite: Sprite;
   protected _upArrowSprite: Sprite;
@@ -103,7 +106,7 @@ export abstract class RpgWindow extends Container {
 
   protected constructor(...args: any[]) {
     super();
-    //this.onRender(this._updateTransform.bind(this));
+    this.onRender = this._updateTransform.bind(this);
     this.initialize(...arguments);
   }
 
@@ -142,6 +145,7 @@ export abstract class RpgWindow extends Container {
 
 
     this.pause = false;
+
   }
 
   /**
@@ -157,7 +161,8 @@ export abstract class RpgWindow extends Container {
   set windowskin(value: Bitmap) {
     if (this._windowskin === value) return;
     this._windowskin = value;
-    this._windowskin.on('complete', () => this._onWindowskinLoad());
+    // because of the nature of pixijs being async and the new bitmap api we use a *once loaded* approach
+    value.onceLoaded(() => this._onWindowskinLoad());
   }
 
   /**
@@ -260,7 +265,7 @@ export abstract class RpgWindow extends Container {
   }
 
   set opacity(value: number) {
-    this._container.alpha = value.clamp(0, 255) / 255;
+    this._container.alpha = clamp(value,0,255) / 255;
   }
 
   /**
@@ -274,7 +279,7 @@ export abstract class RpgWindow extends Container {
   }
 
   set backOpacity(value: number) {
-    this._backSprite.alpha = value.clamp(0, 255) / 255;
+    this._backSprite.alpha = clamp(value,0,255) / 255;
   }
 
   /**
@@ -288,7 +293,7 @@ export abstract class RpgWindow extends Container {
   }
 
   set contentsOpacity(value: number) {
-    this._contentsSprite.alpha = value.clamp(0, 255) / 255;
+    this._contentsSprite.alpha = clamp(value,0,255) / 255;
   }
 
   /**
@@ -303,7 +308,7 @@ export abstract class RpgWindow extends Container {
 
   set openness(value: number) {
     if (this._openness === value) return;
-    this._openness = value.clamp(0, 255);
+    this._openness = clamp(value,0,255);
     this._container.scale.y = this._openness / 255;
     this._container.y = (this.height / 2) * (1 - this._openness / 255);
   }
@@ -346,8 +351,8 @@ export abstract class RpgWindow extends Container {
     );
   }
 
-  override destroy() {
-    const options = { children: true, texture: true };
+  override destroy(opts?: DestroyOptions) {
+    const options = opts || { children: true, texture: true };
     super.destroy(options);
   }
 
@@ -367,12 +372,12 @@ export abstract class RpgWindow extends Container {
   /**
    * Sets the x, y, width, and height all at once.
    *
-   * @param {number} x - The x coordinate of the window.
-   * @param {number} y - The y coordinate of the window.
-   * @param {number} width - The width of the window.
-   * @param {number} height - The height of the window.
+   * @param  x - The x coordinate of the window.
+   * @param  y - The y coordinate of the window.
+   * @param  width - The width of the window.
+   * @param  height - The height of the window.
    */
-  move(x = 0, y = 0, width = 0, height = 0) {
+  move(x: number = 0, y: number = 0, width: number = 0, height: number = 0) {
     this.x = x;
     this.y = y;
     if (this._width !== width || this._height !== height) {
@@ -480,8 +485,8 @@ export abstract class RpgWindow extends Container {
     return this._clientArea.addChild(child);
   }
 
-  override updateTransform(): this {
-    const opts = {} as Partial<UpdateTransformOptions>;
+  private _updateTransform() {
+  //  const opts = {} as Partial<UpdateTransformOptions>;
     this._updateClientArea();
     this._updateFrame();
     this._updateContentsBack();
@@ -490,7 +495,7 @@ export abstract class RpgWindow extends Container {
     this._updateArrows();
     this._updatePauseSign();
     this._updateFilterArea();
-    return super.updateTransform(opts);
+   // return super.updateTransform(opts);
 
   }
 
@@ -537,7 +542,7 @@ export abstract class RpgWindow extends Container {
   }
 
   protected _createFrameSprite() {
-    this._frameSprite = new NineSliceSprite();
+    this._frameSprite = new FrameSprite();
 
     this._frameSprite.setBorder(RpgWindow.FRAME_MARGIN);
     this._container.addChild(this._frameSprite);
@@ -605,30 +610,35 @@ export abstract class RpgWindow extends Container {
 
     this._backTilingSprite.bitmap = this._windowskin;
     this._backTilingSprite.setFrame(0, 96, 96, 96);
-    this._backTilingSprite.move(0, 0, w, h);
-    this._backTilingSprite.scale.x = 1 / this._backGroundSprite.scale.x;
-    this._backTilingSprite.scale.y = 1 / this._backGroundSprite.scale.y;
+    this._backTilingSprite.move(m, m);
+    this._backTilingSprite.width = w;
+    this._backTilingSprite.height = h;
+    this._backTilingSprite.scale.set(1, 1);
+
     this._backGroundSprite.setColorTone(this._colorTone);
   }
 
   protected _refreshFrame() {
     this._frameSprite.bitmap = this._windowskin;
-    this._frameSprite.setFrame(96, 0, 96, 96);
-    this._frameSprite.width = this._width;
-    this._frameSprite.height = this._height;
+    this._frameSprite.setFrame(96, 0, 95, 95);
+    this._frameSprite.resize(this._width, this._height);
+   // this._frameSprite.width = this._width;
+   // this._frameSprite.height = this._height;
     this._frameSprite.move(0, 0);
   }
 
   protected _refreshCursor() {
     this._cursorSprite.bitmap = this._windowskin;
     this._cursorSprite.setFrame(96, 96, 48, 48);
+    this._cursorSprite.setBorder(4);
+    this._cursorSprite.move(this._cursorRect.x, this._cursorRect.y);
     this._cursorSprite.width = this._cursorRect.width;
     this._cursorSprite.height = this._cursorRect.height;
   }
 
   /** @deprecated  since rm-next v.1.0.0 */
   protected _setRectPartsGeometry(sprite: Sprite, srect: Rectangle, drect: Rectangle, m: number) {
-    console.warn('this function has been deprecated since v8 handles nine-slicing!');
+    console.warn('this function has been deprecated to use a custom FrameSprite implementation');
   }
 
   protected _refreshArrows() {
@@ -710,12 +720,12 @@ export abstract class RpgWindow extends Container {
     this._contentsSprite.setFrame(0, 0, bitmap.width, bitmap.height);
   }
 
-  protected _updateArrows(){
+  protected _updateArrows() {
     this._downArrowSprite.visible = this.isOpen() && this.downArrowVisible;
     this._upArrowSprite.visible = this.isOpen() && this.upArrowVisible;
   }
 
-  protected _updatePauseSign(){
+  protected _updatePauseSign() {
     const sprite = this._pauseSignSprite;
     const x = Math.floor(this._animationCount / 16) % 2;
     const y = Math.floor(this._animationCount / 16 / 2) % 2;
@@ -731,7 +741,7 @@ export abstract class RpgWindow extends Container {
     sprite.visible = this.isOpen();
   }
 
-  protected _updateFilterArea(){
+  protected _updateFilterArea() {
     const pos = this._clientArea.worldTransform.apply(new Point(0, 0));
     const filterArea = this._clientArea.filterArea;
     filterArea.x = pos.x + this.origin.x;

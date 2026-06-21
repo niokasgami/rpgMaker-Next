@@ -13,10 +13,9 @@ import {
   $gameVariables, DataManager
 } from '@managers';
 import { GameUnit } from '@objects/GameUnit.ts';
-import { ActionData, ItemEffect } from '@data/RPG';
+import { ActionData, HitType, ItemEffect } from '@data/RPG';
 import { DataItem } from '@data/DataItem.ts';
 import { DataUsableItem } from '@data/DataUsableItem.ts';
-import { HitType } from '@data/RPG/Enum.ts';
 import { DataSkill } from '@data/DataSkill.ts';
 
 
@@ -228,15 +227,15 @@ export class GameAction {
   }
 
   isCertainHit(): boolean {
-    return this.item().hitType === HitType.CERTAIN;
+    return this.item().hitType === HitType.Certain;
   }
 
   isPhysical(): boolean {
-    return this.item().hitType === HitType.PHYSICAL;
+    return this.item().hitType === HitType.Physical;
   }
 
   isMagical(): boolean {
-    return this.item().hitType === HitType.MAGICAL;
+    return this.item().hitType === HitType.Magical;
   }
 
   isAttack(): boolean {

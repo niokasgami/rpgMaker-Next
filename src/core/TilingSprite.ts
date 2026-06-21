@@ -3,6 +3,7 @@ import {
   UpdateTransformOptions
 } from 'pixi.js';
 import { Bitmap } from '@core/Bitmap.ts';
+import { clamp } from '@core/jsExtension.ts';
 
 export class TilingSprite extends PixiTilingSprite {
 
@@ -86,7 +87,7 @@ export class TilingSprite extends PixiTilingSprite {
     return this.alpha * 255;
   }
   set opacity(value: number) {
-    this.alpha = value.clamp(0, 255) / 255;
+    this.alpha = clamp(value,0, 255) / 255;
   }
 
   /**

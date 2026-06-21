@@ -440,7 +440,7 @@ export class GameActor extends GameBattler {
     return gameClass && this._classId === gameClass.id;
   }
 
-  skillTypes() {
+  skillTypes(): number[] {
     const skillTypes = this.addedSkillTypes().sort((a, b) => a - b);
     return skillTypes.filter((x, i, self) => self.indexOf(x) === i);
   }
@@ -547,7 +547,7 @@ export class GameActor extends GameBattler {
     this._level--;
   }
 
-  findNewSkills(lastSkills: DataSkill[]){
+  findNewSkills(lastSkills: DataSkill[]) {
     const newSkills = this.skills();
     for (const lastSkill of lastSkills) {
       newSkills.remove(lastSkill);
@@ -555,7 +555,7 @@ export class GameActor extends GameBattler {
     return newSkills;
   }
 
-  displayLevelUp(newSkills: DataSkill[]){
+  displayLevelUp(newSkills: DataSkill[]) {
     const text = TextManager.levelUp.format(
       this._name,
       TextManager.level,
@@ -637,7 +637,7 @@ export class GameActor extends GameBattler {
   isSpriteVisible(): boolean {
     return $gameSystem.isSideView();
   }
-  override performActionStart(action: GameAction){
+  override performActionStart(action: GameAction) {
     super.performActionStart(action);
     if (action.isAttack()) {
       this.performAttack();
@@ -652,11 +652,11 @@ export class GameActor extends GameBattler {
     }
   }
 
-  override performActionEnd(){
+  override performActionEnd() {
     super.performActionEnd();
   }
 
-  performAttack(){
+  performAttack() {
     const weapons = this.weapons();
     const wtypeId = weapons[0] ? weapons[0].wtypeId : 0;
     const attackMotion = $dataSystem.attackMotions[wtypeId];
@@ -672,7 +672,7 @@ export class GameActor extends GameBattler {
     }
   }
 
-  override performDamage(){
+  override performDamage() {
     super.performDamage();
     if (this.isSpriteVisible()) {
       this.requestMotion("damage");
@@ -704,15 +704,15 @@ export class GameActor extends GameBattler {
     }
   }
 
-  performVictory(){
+  performVictory() {
     this.setActionState("done");
     if (this.canMove()) {
       this.requestMotion("victory");
     }
   }
 
-  performEscape(){
-    if(!this.canMove()) return;
+  performEscape() {
+    if (!this.canMove()) return;
     this.requestMotion("escape");
   }
 
@@ -744,7 +744,7 @@ export class GameActor extends GameBattler {
     this.setActionState("waiting");
   }
 
-  makeConfusionActions(){
+  makeConfusionActions() {
     for (let i = 0; i < this.numActions(); i++) {
       this.action(i).setConfusion();
     }
@@ -765,7 +765,7 @@ export class GameActor extends GameBattler {
     }
   }
 
-  onPlayerWalk(){
+  onPlayerWalk() {
     this.clearResult();
     this.checkFloorEffect();
     if ($gamePlayer.isNormal()) {
@@ -778,11 +778,11 @@ export class GameActor extends GameBattler {
     }
   }
 
-  updateStateSteps(state: DataState){
-    if(!state.removeByWalking) return;
-    if(this._stateSteps.get(state.id) < 0 ) return;
+  updateStateSteps(state: DataState) {
+    if (!state.removeByWalking) return;
+    if (this._stateSteps.get(state.id) < 0) return;
     const st = this._stateSteps.set(state.id, -1);
-    if(st.get(state.id) < 0 )  {
+    if (st.get(state.id) < 0) {
       this.removeState(state.id);
     }
   }
@@ -795,7 +795,7 @@ export class GameActor extends GameBattler {
     }
   }
 
-  showRemovedStates(){
+  showRemovedStates() {
     for (const state of this.result().removedStateObjects()) {
       if (state.message4) {
         $gameMessage.add(state.message4.format(this._name));
@@ -807,7 +807,7 @@ export class GameActor extends GameBattler {
     return 20;
   }
 
-  turnEndOnMap(){
+  turnEndOnMap() {
     if ($gameParty.steps() % this.stepsForTurn() === 0) {
       this.onTurnEnd();
       if (this.result().hpDamage > 0) {
@@ -816,13 +816,13 @@ export class GameActor extends GameBattler {
     }
   }
 
-  checkFloorEffect(){
+  checkFloorEffect() {
     if ($gamePlayer.isOnDamageFloor()) {
       this.executeFloorDamage();
     }
   }
 
-  executeFloorDamage(){
+  executeFloorDamage() {
     const floorDamage = Math.floor(this.basicFloorDamage() * this.fdr);
     const realDamage = Math.min(floorDamage, this.maxFloorDamage());
     this.gainHp(-realDamage);
@@ -839,18 +839,18 @@ export class GameActor extends GameBattler {
     return $dataSystem.optFloorDeath ? this.hp : Math.max(this.hp - 1, 0);
   }
 
-  performMapDamage(){
+  performMapDamage() {
     if (!$gameParty.inBattle()) {
       $gameScreen.startFlashForDamage();
     }
   }
 
-  override clearActions(){
+  override clearActions() {
     super.clearActions();
     this._actionInputIndex = 0;
   }
 
-  inputtingAction(){
+  inputtingAction() {
     return this.action(this._actionInputIndex);
   }
 
@@ -888,7 +888,7 @@ export class GameActor extends GameBattler {
     this._lastMenuSkill.setObject(lastMenuSkill);
   }
 
-  lastBattleSkill(): DataSkill{
+  lastBattleSkill(): DataSkill {
     return this._lastBattleSkill.object() as DataSkill;
   }
 
@@ -911,7 +911,7 @@ export class GameActor extends GameBattler {
   }
 
   override meetsUsableItemConditions(item: DataUsableItem): boolean {
-    if($gameParty.inBattle()){
+    if ($gameParty.inBattle()) {
       if (!BattleManager.canEscape() && this.testEscape(item)) {
         return false;
       }
@@ -919,7 +919,7 @@ export class GameActor extends GameBattler {
     return super.meetsUsableItemConditions(item);
   }
 
-  onEscapeFailure(){
+  onEscapeFailure() {
     if (BattleManager.isTpb()) {
       this.applyTpbPenalty();
     }

@@ -25,6 +25,7 @@ import { GameMessage } from '@objects/GameMessage.ts';
 import { GameSwitches } from '@objects/GameSwitches.ts';
 import { GameVariables } from '@objects/GameVariables.ts';
 import { GameSelfSwitches } from '@objects/GameSelfSwitches.ts';
+import { GameMap, GamePlayer, GameScreen, GameTemp } from '@objects';
 
 // DATA RELATED JSON
 export let $dataActors: DataActor[] = null;

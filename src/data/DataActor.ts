@@ -1,6 +1,7 @@
 import { BaseData } from "./BaseData.ts";
 import { TraitData } from './RPG';
 
+
 export interface DataActor extends BaseData {
   battlerName: string;
   characterIndex: number;

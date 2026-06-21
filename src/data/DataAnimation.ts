@@ -14,11 +14,12 @@ export interface DataAnimation {
   speed: number;
 }
 
+/** MV-format animation (legacy). */
 export interface DataAnimationMV {
   id: number;
   animation1Hue: number;
-  animation1Name: string;
   animation2Hue: number;
-  animation2Name: number;
-  frames: [number[]]; // TODO : implement animation MV?
+  animation1Name: string;
+  animation2Name: string;
+  frames: number[][];
 }

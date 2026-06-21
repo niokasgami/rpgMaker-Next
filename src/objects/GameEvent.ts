@@ -45,7 +45,7 @@ export class GameEvent extends GameCharacter {
 
   override initMembers() {
     super.initMembers();
-    this._moveType = MoveType.FIX;
+    this._moveType = MoveType.Fix;
     this._trigger = 0;
     this._starting = false;
     this._erased = false;

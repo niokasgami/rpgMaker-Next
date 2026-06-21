@@ -1,5 +1,7 @@
 import { BaseData } from '@data/BaseData.ts';
-import { Trait } from '@data/RPG';
+import { TraitData } from '@data/RPG';
+
+
 
 
 export interface DataState extends BaseData {
@@ -22,6 +24,6 @@ export interface DataState extends BaseData {
   removeByWalking: boolean;
   restriction: number;
   stepsToRemove: number;
-  traits: Trait[];
+  traits: TraitData[];
   messageType: number;
 }
